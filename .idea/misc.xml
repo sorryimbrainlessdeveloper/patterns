@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/behavioral/ChainOfResponsibility/pom.xml" />
         <option value="$PROJECT_DIR$/ChainOfResponsibility/pom.xml" />
         <option value="$PROJECT_DIR$/creational/Builder/pom.xml" />
+        <option value="$PROJECT_DIR$/structural/Adapter/pom.xml" />
       </list>
     </option>
   </component>

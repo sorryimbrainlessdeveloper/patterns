@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/ChainOfResponsibility/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/behavioral/ChainOfResponsibility/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/creational/Builder/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/structural/Adapter/src/main/java" charset="UTF-8" />
   </component>
 </project>
