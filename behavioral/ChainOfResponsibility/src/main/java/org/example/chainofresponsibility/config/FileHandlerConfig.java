@@ -15,12 +15,12 @@ public class FileHandlerConfig {
     public FileHandler fileHandlerChain(List<FileHandler> handlers) {
         if (handlers.isEmpty()) throw new IllegalStateException(NO_HANDLERS_AVAILABLE);
 
-        // Проходим по списку обработчиков и создаем цепочку
+        // We go through the list of handlers and create a chain
         for (int i = 0; i < handlers.size() - 1; i++) {
             handlers.get(i).setNextHandler(handlers.get(i + 1));
         }
 
-        // Возвращаем первый обработчик, начало цепочки
+        // Return the first handler, the beginning of the chain
         return handlers.get(0);
     }
 }

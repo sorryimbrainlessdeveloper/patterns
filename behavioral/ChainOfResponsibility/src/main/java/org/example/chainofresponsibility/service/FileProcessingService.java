@@ -19,6 +19,7 @@ public class FileProcessingService {
     private final FileHandler fileHandlerChain;
 
     public String processFile(String fileName) {
+        // Call file processing through chain of responsibility
         fileHandlerChain.handleFile(fileName);
         return PROCESSING_COMPLETE + fileName;
     }

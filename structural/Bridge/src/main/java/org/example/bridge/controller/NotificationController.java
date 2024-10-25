@@ -1,9 +1,8 @@
 package org.example.bridge.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.bridge.service.EmailNotificationService;
-import org.example.bridge.service.SmsNotificationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example.bridge.notifcation.EmailNotification;
+import org.example.bridge.notifcation.SmsNotification;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/notify")
 @RequiredArgsConstructor
 public class NotificationController {
-    private final EmailNotificationService emailNotification;
-    private final SmsNotificationService smsNotification;
+    private final EmailNotification emailNotification;
+    private final SmsNotification smsNotification;
 
     @GetMapping("/sendEmail")
     public String sendEmail(@RequestParam String message) {

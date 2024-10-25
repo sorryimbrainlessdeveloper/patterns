@@ -1,3 +1,136 @@
+## ENG
+
+# Example of the Adapter Pattern in Spring Boot
+
+## Description
+
+The **Adapter** pattern is a structural design pattern that allows objects with incompatible interfaces to work together. It converts the interface of one class into an interface that is understood by other classes. In Spring Boot, this is particularly useful for integrating with external systems or libraries when their interfaces differ from the application's internal API.
+
+In this project, we will explore the use of the **Adapter** pattern in a real-world scenario: integrating with an external API to retrieve product information.
+
+## Project Structure
+
+- **Product**: An interface that describes a product within our application.
+- **ExternalProduct**: A class representing a product retrieved from an external API (with a different set of fields).
+- **ProductAdapter**: An adapter that transforms an `ExternalProduct` object into an object compatible with the `Product` interface.
+- **ProductService**: A service responsible for fetching product data and adapting it.
+- **ProductController**: A REST controller that provides the client with an API to interact with products.
+
+## Example Scenario
+
+Imagine our application expects product information in the `Product` format, but the external API returns data in the `ExternalProduct` format. In this case, the `ProductAdapter` class takes on the task of transforming the data from one format to another, ensuring application compatibility.
+
+## How the Adapter Pattern Works
+
+1. **`Product` Interface**: Describes the product that our application uses.
+    ```java
+    public interface Product {
+        String getName();
+        BigDecimal getPrice();
+        String getDescription();
+    }
+    ```
+
+2. **External Product `ExternalProduct`**: Returned by a third-party API, but its structure does not match the `Product` interface.
+    ```java
+    public class ExternalProduct {
+        private String productName;
+        private double cost;
+        private String details;
+
+        // Getters and constructor
+    }
+    ```
+
+3. **Adapter `ProductAdapter`**: Converts `ExternalProduct` data into `Product`.
+    ```java
+    public class ProductAdapter implements Product {
+        private final ExternalProduct externalProduct;
+
+        public ProductAdapter(ExternalProduct externalProduct) {
+            this.externalProduct = externalProduct;
+        }
+
+        @Override
+        public String getName() {
+            return externalProduct.getProductName();
+        }
+
+        @Override
+        public BigDecimal getPrice() {
+            return BigDecimal.valueOf(externalProduct.getCost());
+        }
+
+        @Override
+        public String getDescription() {
+            return externalProduct.getDetails();
+        }
+    }
+    ```
+
+4. **Service `ProductService`**: Uses the adapter to fetch product data from an external source.
+    ```java
+    @Service
+    public class ProductService {
+        public Product getProductFromExternalApi() {
+            ExternalProduct externalProduct = new ExternalProduct("Laptop", 1500.0, "High-performance laptop");
+            return new ProductAdapter(externalProduct);
+        }
+    }
+    ```
+
+5. **Controller `ProductController`**: Provides data to the client through the API.
+    ```java
+    @RestController
+    @RequestMapping("/products")
+    public class ProductController {
+
+        private final ProductService productService;
+
+        public ProductController(ProductService productService) {
+            this.productService = productService;
+        }
+
+        @GetMapping("/external")
+        public ResponseEntity<Product> getExternalProduct() {
+            Product product = productService.getProductFromExternalApi();
+            return ResponseEntity.ok(product);
+        }
+    }
+    ```
+
+## Running the Project
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/your-repo/spring-adapter-pattern-example.git
+    ```
+
+2. Open the project in your IDE and run it as a Spring Boot application:
+    ```bash
+    ./mvnw spring-boot:run
+    ```
+
+3. Open your browser and navigate to:
+    ```
+    http://localhost:8080/products/external
+    ```
+
+You will receive a JSON response with the adapted product data:
+```json
+{
+  "name": "Laptop",
+  "price": 1500.0,
+  "description": "High-performance laptop"
+}
+```
+
+---
+![Файловая структура паттерна Adapter](src/main/resources/static.images/packages.png)
+---
+
+## RU
+
 # Пример паттерна Адаптер на Spring Boot
 
 ## Описание
@@ -96,6 +229,9 @@
         }
     }
     ```
+---
+![Файловая структура паттерна Adapter](src/main/resources/static.images/packages.png)
+---
 
 ## Запуск проекта
 
