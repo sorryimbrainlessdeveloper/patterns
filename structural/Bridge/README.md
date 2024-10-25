@@ -1,6 +1,4 @@
 ## ENG
-
-
 # Example of the Bridge Pattern in Spring Boot
 
 This project demonstrates the implementation of the **Bridge Pattern** in a Spring Boot application. The Bridge Pattern allows separating abstraction from implementation, making them independent and more flexible.
@@ -87,32 +85,31 @@ public class SmsSender implements NotificationSender {
 }
 ```
 
-
 ### Example Classes
-
 - `EmailSender` — sends notifications via email.
 - `SmsSender` — sends notifications via SMS.
 - `EmailNotification` uses `EmailSender` to send notifications.
 - `SmsNotification` uses `SmsSender` to send notifications.
 
 ### Available Endpoints
-
 - `/sendEmail?message=Hello` — sends a notification via Email.
 - `/sendSms?message=Hello` — sends a notification via SMS.
 
 ### How to Run the Application
-
 1. Clone the repository.
 2. Run the application with the command:
     ```bash
     mvn spring-boot:run
     ```
 3. Use the above endpoints to send notifications.
-
+4. 
 ## Advantages of Using the Bridge Pattern
 
 - **Flexibility** — You can add new ways to send notifications or new types of notifications without changing existing code.
 - **Separation of Concerns** — The abstraction (notifications) is separated from the concrete implementation (sending mechanisms), simplifying the maintenance and extension of the application.
+
+---
+![Общая схема паттерна Bridge](src/main/resources/static/images/bridge.png)
 
 ---
 ![Файловая структура паттерна Bridge](src/main/resources/static/images/packages.png)
