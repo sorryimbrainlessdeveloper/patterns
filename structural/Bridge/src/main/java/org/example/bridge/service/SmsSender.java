@@ -1,6 +1,5 @@
-package org.example.bridge.notifcation;
+package org.example.bridge.service;
 
-import org.example.bridge.service.NotificationSender;
 import org.springframework.stereotype.Component;
 
 @Component

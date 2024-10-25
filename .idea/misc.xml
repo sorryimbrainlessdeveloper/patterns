@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/ChainOfResponsibility/pom.xml" />
         <option value="$PROJECT_DIR$/creational/Builder/pom.xml" />
         <option value="$PROJECT_DIR$/structural/Adapter/pom.xml" />
+        <option value="$PROJECT_DIR$/structural/Bridge/pom.xml" />
       </list>
     </option>
   </component>
