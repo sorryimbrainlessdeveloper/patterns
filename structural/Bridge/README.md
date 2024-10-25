@@ -102,7 +102,7 @@ public class SmsSender implements NotificationSender {
     mvn spring-boot:run
     ```
 3. Use the above endpoints to send notifications.
-4. 
+
 ## Advantages of Using the Bridge Pattern
 
 - **Flexibility** — You can add new ways to send notifications or new types of notifications without changing existing code.
