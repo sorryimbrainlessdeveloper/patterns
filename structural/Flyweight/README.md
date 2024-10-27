@@ -33,7 +33,7 @@ PostgreSQL database, running through **Testcontainers**.
 
    ```bash
    git clone https://github.com/sorryimbrainlessdeveloper/patterns.git
-   cd your-project
+   cd patterns
    ```
 
 2. **Build the project**:
@@ -232,8 +232,8 @@ providing data isolation for integration tests through Testcontainers.
 1. **Клонируйте репозиторий**:
 
    ```bash
-   git clone https://github.com/ваш-проект.git
-   cd ваш-проект
+   git clone https://github.com/sorryimbrainlessdeveloper/patterns.git
+   cd patterns
    ```
 
 2. **Сборка проекта**:
