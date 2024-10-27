@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Adapter" />
+        <module name="Flyweight" />
         <module name="ChainOfResponsibility" />
         <module name="Bridge" />
         <module name="Builder" />
@@ -20,6 +21,7 @@
       <module name="Bridge" options="-parameters" />
       <module name="Builder" options="-parameters" />
       <module name="ChainOfResponsibility" options="-parameters" />
+      <module name="Flyweight" options="-parameters" />
     </option>
   </component>
 </project>
