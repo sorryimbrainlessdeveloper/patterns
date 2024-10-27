@@ -32,7 +32,7 @@ PostgreSQL database, running through **Testcontainers**.
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/your-project.git
+   git clone https://github.com/sorryimbrainlessdeveloper/patterns.git
    cd your-project
    ```
 
