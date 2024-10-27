@@ -8,7 +8,7 @@ This project demonstrates the use of the **Flyweight** design pattern for optimi
 Boot** application. By applying the Flyweight pattern, we reduce the number of database calls by caching already loaded
 objects, which significantly decreases the load on the database and speeds up application response time.
 
-To illustrate this, we use the `Category` entity, whose data is cached after the first access. If a category has already
+To illustrate this, we use the `CategoryData` entity, whose data is cached after the first access. If a category has already
 been loaded, the system retrieves it from the cache instead of making a repeated database call. For testing, we use a
 PostgreSQL database, running through **Testcontainers**.
 
@@ -64,23 +64,26 @@ PostgreSQL database, running through **Testcontainers**.
 ## Project Structure
 
 ```
-my-spring-boot-app/
+flyweight/
 ├── src
 │   ├── main
 │   │   ├── java/com/example/app
-│   │   │   ├── FlyweightApplication.java                             # Main application class
-│   │   │   ├── entity/Category.java                                  # Category entity
-│   │   │   ├── exception/CategoryNotFoundException.java              # Exception to handle the case of absence of a category with a given id
-│   │   │   ├── flyweight_implemntation/CategoryFlyweightFactory.java # Pattern implementation
-│   │   │   ├── repository/CategoryRepository.java                    # Category repository
-│   │   │   └── service/CategoryService.java                          # Service for Category and caching
-│   │   │   └── utils/StaticMessages.java                             # Util messages
-│   │   └── resources/application.yml                                 # Main application configuration
+│   │   │   ├── FlyweightApplication.java
+│   │   │   ├── entity/Category.java
+│   │   │   ├── entity/CategoryData.java
+│   │   │   ├── exception/CategoryNotFoundException.java
+│   │   │   ├── exception/CategoryDataNotFoundException.java
+│   │   │   ├── flyweight_implemntation/CategoryDataFlyweightFactory.java
+│   │   │   ├── repository/CategoryDataRepository.java
+│   │   │   ├── repository/CategoryRepository.java
+│   │   │   ├── service/CategoryService.java
+│   │   │   └── utils/StaticMessages.java
+│   │   └── resources/application.yml                   
 │   └── test
 │       ├── java/com/example/app/service
-│       │   └── CategoryServiceIntegrationTest.java                   # Integration tests using Testcontainers
-│       └── resources/application-test.yml                            # Configuration for tests with PostgreSQL
-└── README.md                                                         # Project description
+│       │   └── CategoryServiceIntegrationTest.java
+│       └── resources/application-test.yml
+└── README.md                                                         
 ```
 
 ## Functional Description
@@ -91,32 +94,45 @@ The `Category` represents a simple category of goods or services. It is stored i
 properties:
 
 - `id` — unique identifier
-- `name` — category name
+- `category data` — nested object
+-
+The `CategoryData` represent a detailed description of goods and services. It is stored in the database and has the following
+properties:
+
+- `id` — unique identifier
+- `category name` - category name
 
 ### `CategoryRepository` Interface
 
 `CategoryRepository` is an interface extending `JpaRepository` and provides standard methods for interacting with the
 database.
 
+### `CategoryDataRepository` Interface
+
+`CategoryDataRepository` is an interface extending `JpaRepository` and provides standard methods for interacting with the
+database.
+
 ### `CategoryService`
 
-`CategoryService` implements caching logic for optimizing requests. It uses the `categoryCache` to store categories
+`CategoryService` implements caching logic for optimizing requests. It uses the `categoryDataCache` to store categories
 loaded from the database. The logic of the service is as follows:
 
-- If a category with the specified `id` is already in the cache, it is returned from the cache.
-- If the category is not in the cache, the service loads it from the database, adds it to the cache, and returns it to
-  the client.
+- Find the category with the specified `id`.
+- If the detailed description of the category is already in the cache, then take it from the cache and assign it to the current category.
+- If the detailed description of the category is not in the cache, the service downloads it from the database, adds it to the cache and returns it.
 
 Example of the caching method:
 
 ```java
-    public static Category getCategory(Long id, CategoryRepository repository) {
-    return categoryCache.computeIfAbsent(
-            id,
-            key -> repository
-                    .findById(key)
-                    .orElseThrow(() -> new CategoryNotFoundException(StaticMessages.CATEGORY_NOT_FOUND.formatted(key)))
-    );
+public Category getCategoryById(Long categoryId) {
+   final Category category = categoryRepository.findById(categoryId)
+           .orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND.formatted(categoryId)));
+
+   final CategoryData categoryData = CategoryDataFlyweightFactory
+           .getCategory(category.getId(), categoryDataRepository);
+   category.setCategoryData(categoryData);
+
+   return category;
 }
 ```
 
@@ -168,11 +184,11 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     void testCategoryCaching() {
-        // Check caching of category with id 1
+        // Check caching category data of category with id 1
         Category category1 = categoryService.getCategoryById(1L);
         assertNotNull(category1);
 
-        // Check that the repeated request takes the category from the cache
+        // Check that the repeated request takes the category with data from the cache
         Category category1Cached = categoryService.getCategoryById(1L);
         assertEquals(category1, category1Cached);
     }
@@ -189,12 +205,9 @@ public class CategoryServiceIntegrationTest {
 
 3. **Caching logging**: Implement logging to track when data is taken from the cache and when it is taken from the
    database.
-
 ---
-
 This application demonstrates a basic implementation of the Flyweight pattern in Spring Boot using JPA and PostgreSQL,
 providing data isolation for integration tests through Testcontainers.
-
 ---
 
 ## RU
@@ -203,13 +216,13 @@ providing data isolation for integration tests through Testcontainers.
 
 ### Описание проекта
 
-Этот проект демонстрирует использование паттерна проектирования **Flyweight** (Приспособленец) для оптимизации работы с
+Этот проект демонстрирует использование паттерна проектирования **Flyweight** для оптимизации работы с
 базой данных в приложении на **Spring Boot**. Применяя паттерн Flyweight, мы уменьшаем количество обращений к базе
 данных за счёт кэширования уже загруженных объектов, что позволяет значительно сократить нагрузку на базу данных и
 ускорить время ответа приложения.
 
-Для демонстрации использована сущность `Category` (Категория), данные которой кэшируются после первого обращения. Если
-категория уже была загружена, система использует её из кэша вместо повторного запроса к базе данных. Для тестирования
+Для демонстрации использована сущность `CategoryData`, данные которой кэшируются после первого обращения. Если
+CategoryData уже была загружена, система использует её из кэша вместо повторного запроса к базе данных. Для тестирования
 используется база данных PostgreSQL, запускаемая через **Testcontainers**.
 
 ## Стек технологий
@@ -264,23 +277,26 @@ providing data isolation for integration tests through Testcontainers.
 ## Структура проекта
 
 ```
-my-spring-boot-app/
+flyweight/
 ├── src
 │   ├── main
-│   │   ├── java/com/example/flyweight
-│   │   │   ├── FlyweightApplication.java                             # Главный класс приложения
-│   │   │   ├── entity/Category.java                                  # Сущность Category
-│   │   │   ├── exception/CategoryNotFoundException.java              # Исключение для обработки случая отсутсвия категории с заданым id
-│   │   │   ├── flyweight_implemntation/CategoryFlyweightFactory.java # Реализация паттерна
-│   │   │   ├── repository/CategoryRepository.java                    # Репозиторий Category
-│   │   │   ├── service/CategoryService.java                          # Сервис для работы с Category и кэширования
-│   │   │   └── utils/StaticMessages.java                             # Утилитные сообщения
-│   │   └── resources/application.yml                                 # Основная конфигурация приложения
+│   │   ├── java/com/example/app
+│   │   │   ├── FlyweightApplication.java
+│   │   │   ├── entity/Category.java
+│   │   │   ├── entity/CategoryData.java
+│   │   │   ├── exception/CategoryNotFoundException.java
+│   │   │   ├── exception/CategoryDataNotFoundException.java
+│   │   │   ├── flyweight_implemntation/CategoryDataFlyweightFactory.java
+│   │   │   ├── repository/CategoryDataRepository.java
+│   │   │   ├── repository/CategoryRepository.java
+│   │   │   ├── service/CategoryService.java
+│   │   │   └── utils/StaticMessages.java
+│   │   └── resources/application.yml                   
 │   └── test
 │       ├── java/com/example/app/service
-│       │   └── CategoryServiceIntegrationTest.java                   # Интеграционные тесты с использованием Testcontainers
-│       └── resources/application-test.yml                            # Конфигурация для тестов с PostgreSQL
-└── README.md                                                         # Описание проекта
+│       │   └── CategoryServiceIntegrationTest.java
+│       └── resources/application-test.yml
+└── README.md
 ```
 
 ## Описание функционала
@@ -291,31 +307,45 @@ my-spring-boot-app/
 свойства:
 
 - `id` — уникальный идентификатор
-- `name` — название категории
+- `category data` — вложенный объект
+
+`CategoryData` представляет собой детальное описание товаров или услуг. Она хранится в базе данных и имеет следующие
+свойства:
+
+- `id` — уникальный идентификатор
+- `category name` - название категории
 
 ### Интерфейс `CategoryRepository`
 
 `CategoryRepository` — это интерфейс, расширяющий `JpaRepository` и предоставляющий стандартные методы для
 взаимодействия с базой данных.
 
+### Интерфейс `CategoryDataRepository`
+
+`CategoryDataRepository` - это интерфейс, расширяющий `JpaRepository` и предоставляющий стандартные методы для
+взаимодействия с базой данных.
+
 ### Сервис `CategoryService`
 
-`CategoryService` реализует логику кэширования для оптимизации запросов. Он использует кэш `categoryCache`, в котором
-хранятся категории, загруженные из базы данных. Логика работы сервиса следующая:
+`CategoryService` реализует логику кэширования для оптимизации запросов. Он использует кэш `categoryDataCache`, в котором
+хранятся подробные описания категорий, загруженные из базы данных. Логика работы сервиса следующая:
 
-- Если категория с указанным `id` уже есть в кэше, она возвращается из кэша.
-- Если категория отсутствует в кэше, сервис загружает её из базы данных, добавляет в кэш и возвращает клиенту.
+- Находим категрию с указанным `id`.
+- Если подробное описание категории уже есть в кэше, то берем ее из кэша и присваиваем текущей категории.
+- Если подробное описание категории отсутствует в кэше, сервис загружает её из базы данных, добавляет в кэш и возвращает.
 
 Пример метода кэширования:
 
 ```java
-    public static Category getCategory(Long id, CategoryRepository repository) {
-    return categoryCache.computeIfAbsent(
-            id,
-            key -> repository
-                    .findById(key)
-                    .orElseThrow(() -> new CategoryNotFoundException(StaticMessages.CATEGORY_NOT_FOUND.formatted(key)))
-    );
+public Category getCategoryById(Long categoryId) {
+   final Category category = categoryRepository.findById(categoryId)
+           .orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND.formatted(categoryId)));
+
+   final CategoryData categoryData = CategoryDataFlyweightFactory
+           .getCategory(category.getId(), categoryDataRepository);
+   category.setCategoryData(categoryData);
+
+   return category;
 }
 ```
 
